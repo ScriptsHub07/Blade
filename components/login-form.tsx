@@ -1,63 +1,72 @@
-"use client"
+// components/LoginForm.tsx
+"use client";
 
-import { useState, type FormEvent } from "react"
-import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
-import { Loader } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { useAuth } from "@/hooks/use-auth"
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { Loader } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "@/hooks/use-auth";
 
-export default function LoginForm() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [emailError, setEmailError] = useState("")
-  const [passwordError, setPasswordError] = useState("")
+interface LoginFormProps {
+  redirect: string;
+}
 
-  const { login, loading, error } = useAuth()
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const redirect = searchParams.get("redirect") || "/"
+export default function LoginForm({ redirect }: LoginFormProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  const { login, loading, error } = useAuth();
+  const router = useRouter();
 
   const validateEmail = () => {
     if (!email) {
-      setEmailError("O email é obrigatório")
-      return false
+      setEmailError("O email é obrigatório");
+      return false;
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      setEmailError("Email inválido")
-      return false
+      setEmailError("Email inválido");
+      return false;
     }
-    setEmailError("")
-    return true
-  }
+    setEmailError("");
+    return true;
+  };
 
   const validatePassword = () => {
     if (!password) {
-      setPasswordError("A senha é obrigatória")
-      return false
+      setPasswordError("A senha é obrigatória");
+      return false;
     }
-    setPasswordError("")
-    return true
-  }
+    setPasswordError("");
+    return true;
+  };
 
   const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    const isEmailValid = validateEmail()
-    const isPasswordValid = validatePassword()
+    const isEmailValid = validateEmail();
+    const isPasswordValid = validatePassword();
 
     if (!isEmailValid || !isPasswordValid) {
-      return
+      return;
     }
 
-    const success = await login(email, password)
+    const success = await login(email, password);
     if (success) {
-      router.push(redirect)
+      router.push(redirect);
     }
-  }
+  };
 
   return (
     <Card>
@@ -116,14 +125,14 @@ export default function LoginForm() {
       <CardFooter className="flex flex-col items-center">
         <p className="text-sm text-muted-foreground">
           Não tem uma conta?{" "}
-          <Link href="/cadastro" className="text-primary hover:underline">
+          <a href="/cadastro" className="text-primary hover:underline">
             Cadastre-se
-          </Link>
+          </a>
         </p>
         <p className="text-xs text-muted-foreground mt-4">
           Para testes, use: <span className="font-medium">admin@thebuxx.com / admin123</span>
         </p>
       </CardFooter>
     </Card>
-  )
+  );
 }
